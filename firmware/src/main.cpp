@@ -1,31 +1,32 @@
+
 #include <Arduino.h>
+
 #include <Keypad.h>
 
+/*--------------------Configuração do teclado--------------------------*/
+const byte linhas = 3; //quantidade de linhas                        
+const byte colunas = 3;//quantidade de colunas                      
+                                                                     
+char tec[linhas][colunas] = {   //oque vai retornar do teclado       
+  {'1','2','3'},                                                     
+  {'4','5','6'},                                                     
+  {'7','8','9'}                                                      
+};                                                                   
+                                                                     
+                                                                     
+byte rowPins[linhas] = {13, 12, 11}; //pinos da linha do teclado     
+byte colPins[colunas] = {10, 9, 8};//pinos da coluba do teclado      
+                                                                     
+Keypad keypad = Keypad(makeKeymap(tec), rowPins, linhas, colunas);   
+                                                                     
+/*---------------------------------------------------------------------*/
 
-/*--------------------Configuração do teclado--------------------------|*/
-const byte linhas = 3; //quantidade de linhas                        /*|*/
-const byte colunas = 3;//quantidade de colunas                       /*|*/
-                                                                     /*|*/
-char tec[linhas][colunas] = {   //oque vai retornar do teclado       /*|*/
-  {'1','2','3'},                                                     /*|*/
-  {'4','5','6'},                                                     /*|*/ 
-  {'7','8','9'}                                                      /*|*/
-};                                                                   /*|*/
-                                                                     /*|*/
-                                                                     /*|*/
-byte rowPins[linhas] = {13, 12, 11}; //pinos da linha do teclado     /*|*/
-byte colPins[colunas] = {10, 9, 8};//pinos da coluba do teclado      /*|*/
-                                                                     /*|*//
-Keypad keypad = Keypad(makeKeymap(tec), rowPins, linhas, colunas);   /*|*/
-                                                                     /*|*/
-/*---------------------------------------------------------------------|*/
 
-
-/*--------------------------MAP HARDWARE--------------------------------|*/
-void setup() {                                                        /*|*/
-  Serial.begin(31250);                                                /*|*/
-}                                                                     /*|*/
-/*----------------------------------------------------------------------|*/
+/*--------------------------MAP HARDWARE--------------------------------*/
+void setup() {                                                        
+  Serial.begin(31250);                                                
+}                                                                     
+/*----------------------------------------------------------------------*/
 
 void sendMIDI(byte status, byte data1, byte data2)
 
