@@ -1,6 +1,5 @@
 
 #include <Arduino.h>
-
 #include <Keypad.h>
 
 /*--------------------Configuração do teclado--------------------------*/
@@ -17,7 +16,8 @@ char tec[linhas][colunas] = {   //oque vai retornar do teclado
 byte rowPins[linhas] = {13, 12, 11}; //pinos da linha do teclado     
 byte colPins[colunas] = {10, 9, 8};//pinos da coluba do teclado      
                                                                      
-Keypad keypad = Keypad(makeKeymap(tec), rowPins, linhas, colunas);   
+Keypad keypad = Keypad(makeKeymap(tec), rowPins, colPins, linhas, colunas);
+ 
                                                                      
 /*---------------------------------------------------------------------*/
 
@@ -25,34 +25,59 @@ Keypad keypad = Keypad(makeKeymap(tec), rowPins, linhas, colunas);
 /*--------------------------MAP HARDWARE--------------------------------*/
 void setup() {                                                        
   Serial.begin(31250);                                                
-}                                                                     
+}                                                                      
 /*----------------------------------------------------------------------*/
 
-void sendMIDI(byte status, byte data1, byte data2)
+
+
+unsigned int scanTEC(int key);
+void statusMIDI(unsigned int status, unsigned int key);
+void printMIDI(byte status, byte data1, byte data2);
 
 
 
-void loop() {
-  char key = keypad.getKey();  
-  
+void loop() 
+{ 
+  scanTEC(keypad.getKey());
+
+}
+
+
+unsigned int scanTEC(int key)
+{
+  byte note = 0;
+
   if (key) {
-   
-    if (keypad.getState() == PRESSED) {
-      byte note = 60 + (key - '0');  
-      sendMIDI(0x90, note, 127);     
-    }
+    note = 60 + (key - '0');   // calcula a nota só quando existe tecla
+  }
 
-    
-    if (keypad.getState() == RELEASED) {
-      byte note = 60 + (key - '0');
-      sendMIDI(0x80, note, 0);       
-    }
+  if (keypad.getState() == PRESSED && key) {
+    statusMIDI(1, note);    
+  }
+
+  if (keypad.getState() == RELEASED && key) {
+    statusMIDI(0, note);     
   }
 }
 
 
-void sendMIDI(byte status, byte data1, byte data2) {
+
+void printMIDI(byte status, byte data1, byte data2) 
+{
   Serial.write(status);
   Serial.write(data1);
   Serial.write(data2);
+}
+
+void statusMIDI(unsigned status, unsigned int tec)
+{
+  if(status == 1){ 
+      printMIDI(0x90, tec, 127);
+  }
+
+  if (status == 0)
+  {
+    printMIDI(0x80, tec, 0);
+  }
+  
 }
